@@ -7,7 +7,7 @@ public class Hydrogen extends Thread {
 	private static int hydrogenCounter =0;
 	private int id;
 	private Propane sharedPropane;
-	private AtomicBoolean flag = new AtomicBoolean(true);
+	public static AtomicBoolean flag = new AtomicBoolean(true); // Used to initially
 
 
 	public Hydrogen(Propane propane_obj) {
@@ -21,14 +21,25 @@ public class Hydrogen extends Thread {
 	public void run() {
 
 	    try {
-
+			sharedPropane.mutex.acquire();
+			if (flag.get() == true && Carbon.flag.get()==true){
+				sharedPropane.carbonQ.release(3);
+				sharedPropane.hydrogensQ.release(8);
+				flag.set(false);
+				Carbon.flag.set(false);
+			}
+			sharedPropane.mutex.release();
 
 			sharedPropane.hydrogensQ.acquire();
 
 			sharedPropane.barrier.phase1();
-			sharedPropane.mutex.acquire();
-			sharedPropane.bond("H"+this.id);
-			sharedPropane.mutex.release();
+				sharedPropane.mutex.acquire();
+					if (sharedPropane.getCarbon() == 0 && sharedPropane.getHydrogen() == 0){
+						System.out.println("---Group Ready for bonding---");
+					}
+					sharedPropane.addHydrogen();
+					sharedPropane.bond("H"+this.id);
+				sharedPropane.mutex.release();
 			sharedPropane.barrier.phase2();
 			sharedPropane.hydrogensQ.release();
 		}

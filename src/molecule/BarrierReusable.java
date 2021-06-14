@@ -20,7 +20,7 @@ public class BarrierReusable {
 	public void phase1() throws InterruptedException{
 		mutex.acquire();    // Lock between acquire and release
 			count+=1;
-			if (count==n){ barrier1.release(n);System.out.println("Bonding");} //unlock first barrier for n threads
+			if (count==n){ barrier1.release(n);} //unlock first barrier for n threads
 		mutex.release();    // End lock
 		barrier1.acquire();          // Acquire decrements
 	}
@@ -28,7 +28,7 @@ public class BarrierReusable {
 	public void phase2() throws InterruptedException{
 		mutex.acquire();     // lock
 			count-=1;
-			if (count==0) {barrier2.release(n); System.out.println("Bonding 2");}  //unlock second  barrier for n threads
+			if (count==0) {barrier2.release(n);}  //unlock second  barrier for n threads
 		mutex.release();  // release lock
 		barrier2.acquire();
 		
