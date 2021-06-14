@@ -1,11 +1,13 @@
 package molecule;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class Carbon extends Thread {
 	
 	private static int carbonCounter =0;
 	private int id;
 	private Propane sharedPropane;
-	private boolean flag = true;
+	public AtomicBoolean flag = new AtomicBoolean(true);
 
 	public Carbon(Propane propane_obj) {
 		Carbon.carbonCounter+=1;       // Counts number of Carbons
@@ -15,16 +17,17 @@ public class Carbon extends Thread {
 	
 	public void run() {
 	    try {
-	    	sharedPropane.mutex.acquire();
-	    	if (sharedPropane.carbonQ.availablePermits() == 0 && sharedPropane.hydrogensQ.availablePermits() == 0){
-	    		System.out.println("Bonding");
-	    		sharedPropane.carbonQ.release(3);
-	    		sharedPropane.hydrogensQ.release(8);
-			}
-			sharedPropane.mutex.release();
 
-	    	sharedPropane.carbonQ.acquire();
-	    	sharedPropane.bond("C"+this.id);
+
+			sharedPropane.carbonQ.acquire();
+
+			sharedPropane.barrier.phase1();
+			sharedPropane.mutex.release();
+			sharedPropane.bond("C"+this.id);
+			sharedPropane.mutex.acquire();
+			sharedPropane.barrier.phase2();
+			sharedPropane.carbonQ.release();
+
 
 		}
 	    catch (InterruptedException ex) { /* not handling this  */}

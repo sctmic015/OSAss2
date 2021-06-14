@@ -1,11 +1,13 @@
 package molecule;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class Hydrogen extends Thread {
 
 	private static int hydrogenCounter =0;
 	private int id;
 	private Propane sharedPropane;
-	private boolean flag = true;
+	private AtomicBoolean flag = new AtomicBoolean(true);
 
 
 	public Hydrogen(Propane propane_obj) {
@@ -20,18 +22,15 @@ public class Hydrogen extends Thread {
 
 	    try {
 
-			sharedPropane.mutex.acquire();
-			if (sharedPropane.carbonQ.availablePermits() == 0 && sharedPropane.hydrogensQ.availablePermits() == 0){
-				System.out.println("Bonding");
-				sharedPropane.carbonQ.release(3);
-				sharedPropane.hydrogensQ.release(8);
-			}
-			sharedPropane.mutex.release();
 
 			sharedPropane.hydrogensQ.acquire();
+
+			sharedPropane.barrier.phase1();
+			sharedPropane.mutex.acquire();
 			sharedPropane.bond("H"+this.id);
-
-
+			sharedPropane.mutex.release();
+			sharedPropane.barrier.phase2();
+			sharedPropane.hydrogensQ.release();
 		}
 	   catch (InterruptedException ex) { /* not handling this  */}
 	    //System.out.println(" ");

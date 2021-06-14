@@ -17,8 +17,8 @@ public class Propane {
 			this.barrier=new BarrierReusable(11); //11 atoms in Propane
 			this.mutex=new Semaphore(1); //Open to start
 			
-			this.carbonQ = new Semaphore(0); // Closed to start
-			this.hydrogensQ = new Semaphore(0); //Closed to start
+			this.carbonQ = new Semaphore(3); // Closed to start
+			this.hydrogensQ = new Semaphore(8); //Closed to start
 			
 		    this.H=0;
 		    this.C=0;
