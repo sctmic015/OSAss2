@@ -5,7 +5,7 @@ public class Hydrogen extends Thread {
 	private static int hydrogenCounter =0;
 	private int id;
 	private Propane sharedPropane;
-	private static boolean q2 = true;
+	private boolean flag = true;
 
 
 	public Hydrogen(Propane propane_obj) {
@@ -19,17 +19,19 @@ public class Hydrogen extends Thread {
 	public void run() {
 
 	    try {
-	    	 // you will need to fix below
+
 			sharedPropane.mutex.acquire();
-			if (q2 == true){
+			if (sharedPropane.carbonQ.availablePermits() == 0 && sharedPropane.hydrogensQ.availablePermits() == 0){
+				System.out.println("Bonding");
+				sharedPropane.carbonQ.release(3);
 				sharedPropane.hydrogensQ.release(8);
-				q2 = false;
 			}
 			sharedPropane.mutex.release();
+
 			sharedPropane.hydrogensQ.acquire();
-			sharedPropane.barrier.phase1();
-			sharedPropane.bond("H"+ this.id);
-			//sharedPropane.barrier.b_wait();
+			sharedPropane.bond("H"+this.id);
+
+
 		}
 	   catch (InterruptedException ex) { /* not handling this  */}
 	    //System.out.println(" ");

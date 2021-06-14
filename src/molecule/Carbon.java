@@ -5,7 +5,7 @@ public class Carbon extends Thread {
 	private static int carbonCounter =0;
 	private int id;
 	private Propane sharedPropane;
-	private static boolean q = true;
+	private boolean flag = true;
 
 	public Carbon(Propane propane_obj) {
 		Carbon.carbonCounter+=1;       // Counts number of Carbons
@@ -14,19 +14,17 @@ public class Carbon extends Thread {
 	}
 	
 	public void run() {
-	    try {	 
-	    	 // you will need to fix below
-			sharedPropane.mutex.acquire();
-			if (q == true){
-				sharedPropane.carbonQ.release(3);
-				q = false;
+	    try {
+	    	sharedPropane.mutex.acquire();
+	    	if (sharedPropane.carbonQ.availablePermits() == 0 && sharedPropane.hydrogensQ.availablePermits() == 0){
+	    		System.out.println("Bonding");
+	    		sharedPropane.carbonQ.release(3);
+	    		sharedPropane.hydrogensQ.release(8);
 			}
 			sharedPropane.mutex.release();
-			//System.out.print();
-			sharedPropane.carbonQ.acquire();
-			sharedPropane.barrier.phase1();
-			sharedPropane.bond("C"+ this.id);
-			//sharedPropane.barrier.b_wait();
+
+	    	sharedPropane.carbonQ.acquire();
+	    	sharedPropane.bond("C"+this.id);
 
 		}
 	    catch (InterruptedException ex) { /* not handling this  */}
