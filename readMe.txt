@@ -1,15 +1,14 @@
 MakeFIle Details:
 Please use all makefile commands from /SCTMIC015_OS2 directory
 There is an option to compile the code and options to run the program with a small selection of initial arguements
-make -> compiles the code
-make run8_3 -> Runs the simulation for 8 hydrogen and 3 carbon molecules
-make run16_6 -> Runs the simulation for 16 hydrogen and 6 carbon molecules
-make run24_9 -> Runs the simulation for 24 hydrogen and 9 carbon molecules
-make run32_12 -> Runs the simulation for 32 hydrogen and 12 carbon molecules
-make run40_15 -> Runs the simulation for 40 hydrogen and 15 carbon molecules
-make runError -> Runs the simulation for 25 hydrogen and 9 carbon molecules. This will give an error
+Compile
+    make -> compiles the code
+Run
+    make run hydrogen=numHydrogen carbon=numCarbon
+    where numHydrogen and numCarbons are integer values for the atom counts
 
 How to run:
+See make above or
 From within the bin directory type:
     java molecule.RunSimulation "number of hydrogen molecules" "number of carbon molecules"
 

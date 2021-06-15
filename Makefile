@@ -21,18 +21,8 @@ docs:
 	javadoc -d $(DOCDIR) $(SRCDIR)/*.java
 clean:
 	rm $(BINDIR)/molecule/*.class
-run8_3:
-	java -cp bin molecule.RunSimulation "8" "3"
-run16_6:
-	java -cp bin molecule.RunSimulation "16" "6"
-run24_9:
-	java -cp bin molecule.RunSimulation "24" "9"
-run32_12:
-	java -cp bin molecule.RunSimulation "32" "12"
-run40_15:
-	java -cp bin molecule.RunSimulation "40" "15"
-runError:
-	java -cp bin molecule.RunSimulation "25" "9"
+run:
+	java -cp bin molecule.RunSimulation $(hydrogen) $(carbon)
 cleandocs:
 	rm -r docs/*
 
