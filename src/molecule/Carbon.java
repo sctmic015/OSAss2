@@ -1,3 +1,7 @@
+/** Carbon class for threads representing carbon atoms
+ * @author SCTMIC015 and UCT Computer Science Department
+ */
+
 package molecule;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -9,32 +13,38 @@ public class Carbon extends Thread {
 	private Propane sharedPropane;
 	public static AtomicBoolean flag = new AtomicBoolean(true);
 
+	/**
+	 * Constructor
+	 * @param propane_obj
+	 */
 	public Carbon(Propane propane_obj) {
 		Carbon.carbonCounter+=1;       // Counts number of Carbons
 		id=carbonCounter;              // id = num Carbons
 		this.sharedPropane = propane_obj;  // propane object. Shared propane object the whole time
 	}
-	
+
+	/**
+	 * Run method to start each thread
+	 */
 	public void run() {
 	    try {
 
 	    	// Test to set the queue's when the first thread is active. Ignores once flag has been changed
-			// This can be avoided by setting
-			sharedPropane.mutex.acquire(); // Acquire the mutex lock when reading and writing from shared memory in propane class
-			if (flag.get() == true && Hydrogen.flag.get() == true){
+			// This can be avoided by setting the queues to 3 and 8 respectively in the propane class
+			// This only done once at the beginning. The queues are otherwise reset at the end after barrier.
+			if (flag.getAndSet(false) == true){
+				sharedPropane.mutex.acquire();
 				sharedPropane.carbonQ.release(3);
-				sharedPropane.hydrogensQ.release(8);
-				flag.set(false);
-				Hydrogen.flag.set(false);
+				sharedPropane.mutex.release();
 			}
-			sharedPropane.mutex.release();
+
 
 			sharedPropane.carbonQ.acquire();  // Ensures that only the three carbon threads from the queue pass this point
 
 			sharedPropane.barrier.phase1(); // Ensures that we can only proceed when 8 hydrogens and 3 carbons have reached this point. Barrier is then activated again
 				sharedPropane.mutex.acquire(); // Acquire mutex semaphore when reading and writing to shared memory in the propane class
 					if (sharedPropane.getCarbon() == 0 && sharedPropane.getHydrogen() == 0){ // Prints group ready for bonding if the number of carbons and hydrogens equals 0
-						System.out.println("---Group Ready for bonding---");
+						System.out.println("---Group ready for bonding---");
 					}
 					sharedPropane.addCarbon(); // adds carbon
 					sharedPropane.bond("C"+this.id); // bonds

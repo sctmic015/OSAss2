@@ -14,7 +14,7 @@ public class RunSimulation {
 		int no_carbons = Integer.parseInt(args[1]);
 
 		// Error checking to see whether there is the correct number of Hydrogen and Carbon atoms. Exits the program if there is not
-		if (no_hydrogens / 8 != no_carbons / 3){
+		if (no_hydrogens / 8 != no_carbons / 3 || no_hydrogens % 8 != 0 || no_carbons % 3 != 0){
 			System.out.println("There is an incorrect number of atoms.");
 			System.out.println("Exiting program");
 			System.exit(1);
